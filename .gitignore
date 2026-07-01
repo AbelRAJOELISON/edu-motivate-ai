@@ -1,0 +1,14 @@
+﻿__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.streamlit/
+
+frontend_reactJs/node_modules/
+frontend_reactJs/dist/
+frontend_reactJs/.vite/
+
+backend_fastAPI/__pycache__/
+
+*.log

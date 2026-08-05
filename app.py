@@ -1,9 +1,3 @@
-# ============================================================
-# app.py
-# Application web de prédiction et recommandation académique
-# Modèle : scores factoriels + régression logistique
-# ============================================================
-
 import os
 import sys
 import __main__
@@ -17,10 +11,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.base import BaseEstimator, TransformerMixin
 
-
-# ============================================================
-# 1. Classe nécessaire pour recharger le modèle sauvegardé
-# ============================================================
 
 def varimax(Phi, gamma=1.0, q=100, tol=1e-6):
     p, k = Phi.shape
@@ -91,10 +81,6 @@ setattr(__main__, "PCAVarimaxTransformer", PCAVarimaxTransformer)
 sys.modules["__main__"].PCAVarimaxTransformer = PCAVarimaxTransformer
 
 
-# ============================================================
-# 2. Chargement du modèle
-# ============================================================
-
 @st.cache_resource
 def load_artifact():
     model_path = os.path.join(
@@ -112,10 +98,6 @@ dimension_names = artifact["dimension_names"]
 threshold = artifact["threshold"]
 metrics = artifact["metrics"]
 
-
-# ============================================================
-# 3. Configuration de la page
-# ============================================================
 
 st.set_page_config(
     page_title="Prédiction de la performance académique",
@@ -238,10 +220,6 @@ with st.expander("Performance du modèle utilisé"):
         "Valeur": [round(v, 3) for v in metrics.values()]
     }))
 
-
-# ============================================================
-# 4. Formulaire de saisie avec signification des valeurs encodées
-# ============================================================
 
 st.header("1. Informations de l’étudiant")
 
@@ -463,10 +441,6 @@ with col3:
     input_data["COM_SC"] = select_encoded_variable("COM_SC")
 
 
-# ============================================================
-# 5. Fonction de prédiction
-# ============================================================
-
 def predict_student(input_data):
     X_new = pd.DataFrame([input_data])
 
@@ -518,10 +492,6 @@ def predict_student(input_data):
         "intercept": intercept
     }
 
-
-# ============================================================
-# 6. Fonction de recommandation
-# ============================================================
 
 def generate_recommendations(result):
     predicted_class = result["predicted_class"]
@@ -612,10 +582,6 @@ def generate_recommendations(result):
 
     return pd.DataFrame(recommendations)
 
-
-# ============================================================
-# 7. Affichage des résultats
-# ============================================================
 
 st.header("2. Prédiction")
 
@@ -718,49 +684,41 @@ if predict_clicked:
         )
 
 
-# ============================================================
-# 8. Méthodologie mathématique affichée dans l’application
-# ============================================================
-
 with st.expander("Méthodologie mathématique utilisée"):
     st.markdown(r"""
-    L’application applique la chaîne mathématique suivante :
+    L'application applique la chaîne mathématique suivante :
 
     **1. Standardisation**
 
-    $$Z_{new,j}=\frac{X_{new,j}-\mu_j}{\sigma_j}$$
+    $$Z_{new,j} = \frac{X_{new,j} - \mu_j}{\sigma_j}, \qquad j = 1, \dots, p$$
 
     **2. Projection factorielle**
 
-    Pour des raisons de généralisation, la somme est écrite de manière générique (nombre de variables p) :
+    $$D_{new,k} = \sum_{j=1}^{p} a_{jk}\,Z_{new,j}, \qquad k = 1, \dots, m$$
 
-    $$D_{new,k}=\sum_{j=1}^{p} a_{jk} Z_{new,j}$$
+    (notation vectorielle : $$\mathbf{D} = A^{\top} \mathbf{Z}$$ ; dans cette application on prend typiquement $m=4$ dimensions.)
 
-    On peut aussi écrire la projection en notation vectorielle :
+    **3. Régression logistique**
 
-    $$\mathbf{D}=A^{\top}\mathbf{Z}$$
+    La probabilité d'appartenir à la classe "performance élevée" est donnée par la fonction logistique appliquée à la combinaison linéaire des dimensions :
 
-    **3. Régression logistique (formulation simplifiée)**
+    $$P(Y=1) = \frac{1}{1 + \exp\bigl(-\bigl(\theta_0 + \sum_{k=1}^{m} \theta_k D_k\bigr)\bigr)}$$
 
-    Pour simplifier la présentation publique, la combinaison linéaire des dimensions est représentée par le produit scalaire \(\boldsymbol{\beta}^{\top}\mathbf{D}\) et n'est pas détaillée coefficient par coefficient. La probabilité est alors :
-
-    $$P(Y=1)=\frac{1}{1+\exp\bigl(-6\;\boldsymbol{\beta}^{\top}\mathbf{D}\bigr)}$$
-
-    (le facteur 6 est ici une mise à l'échelle utilisée pour l'exposant — les coefficients individuels \(\boldsymbol{\beta}\) ne sont pas affichés)
+    On peut écrire de façon compacte : $$P(Y=1) = \frac{1}{1 + \exp\bigl(-\bigl(\theta_0 + \boldsymbol{\theta}^{\top}\mathbf{D}\bigr)\bigr)}$$
 
     **4. Classification**
 
-    $$\hat{Y}=1 \text{ si } P(Y=1)\geq0.5, \text{ sinon } \hat{Y}=0$$
+    $$\hat{Y} = \begin{cases}1 & \text{si } P(Y=1) \ge 0.5\\0 & \text{sinon}\end{cases}$$
 
     **5. Contribution des dimensions**
 
-    $$C_k=\theta_kD_k$$
+    La contribution de la dimension $k$ à la combinaison linéaire est :
 
-    Une dimension est considérée comme défavorable si :
+    $$C_k = \theta_k D_k$$
 
-    $$C_k<0$$
+    Une dimension est considérée comme défavorable si $C_k < 0$.
 
-    Les recommandations sont priorisées selon :
+    Les recommandations sont priorisées selon l'impact :
 
-    $$Impact_k=|C_k|$$
+    $$\text{Impact}_k = |C_k|$$
     """)

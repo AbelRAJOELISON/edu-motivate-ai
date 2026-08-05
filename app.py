@@ -732,11 +732,21 @@ with st.expander("Méthodologie mathématique utilisée"):
 
     **2. Projection factorielle**
 
-    $$D_{new,k}=\sum_{j=1}^{24}a_{jk}Z_{new,j}$$
+    Pour des raisons de généralisation, la somme est écrite de manière générique (nombre de variables p) :
 
-    **3. Régression logistique**
+    $$D_{new,k}=\sum_{j=1}^{p} a_{jk} Z_{new,j}$$
 
-    $$P(Y=1)=\frac{1}{1+\exp[-(\theta_0+\theta_1D_1+\theta_2D_2+\theta_3D_3+\theta_4D_4)]}$$
+    On peut aussi écrire la projection en notation vectorielle :
+
+    $$\mathbf{D}=A^{\top}\mathbf{Z}$$
+
+    **3. Régression logistique (formulation simplifiée)**
+
+    Pour simplifier la présentation publique, la combinaison linéaire des dimensions est représentée par le produit scalaire \(\boldsymbol{\beta}^{\top}\mathbf{D}\) et n'est pas détaillée coefficient par coefficient. La probabilité est alors :
+
+    $$P(Y=1)=\frac{1}{1+\exp\bigl(-6\;\boldsymbol{\beta}^{\top}\mathbf{D}\bigr)}$$
+
+    (le facteur 6 est ici une mise à l'échelle utilisée pour l'exposant — les coefficients individuels \(\boldsymbol{\beta}\) ne sont pas affichés)
 
     **4. Classification**
 

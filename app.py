@@ -728,43 +728,29 @@ with st.expander("Méthodologie mathématique utilisée"):
 
     **1. Standardisation**
 
-    \[
-    Z_{new,j}=\frac{X_{new,j}-\mu_j}{\sigma_j}
-    \]
+    $$Z_{new,j}=\frac{X_{new,j}-\mu_j}{\sigma_j}$$
 
     **2. Projection factorielle**
 
-    \[
-    D_{new,k}=\sum_{j=1}^{24}a_{jk}Z_{new,j}
-    \]
+    $$D_{new,k}=\sum_{j=1}^{24}a_{jk}Z_{new,j}$$
 
     **3. Régression logistique**
 
-    \[
-    P(Y=1)=\frac{1}{1+\exp[-(\theta_0+\theta_1D_1+\theta_2D_2+\theta_3D_3+\theta_4D_4)]}
-    \]
+    $$P(Y=1)=\frac{1}{1+\exp[-(\theta_0+\theta_1D_1+\theta_2D_2+\theta_3D_3+\theta_4D_4)]}$$
 
     **4. Classification**
 
-    \[
-    \hat{Y}=1 \text{ si } P(Y=1)\geq0.5, \text{ sinon } \hat{Y}=0
-    \]
+    $$\hat{Y}=1 \text{ si } P(Y=1)\geq0.5, \text{ sinon } \hat{Y}=0$$
 
     **5. Contribution des dimensions**
 
-    \[
-    C_k=\theta_kD_k
-    \]
+    $$C_k=\theta_kD_k$$
 
     Une dimension est considérée comme défavorable si :
 
-    \[
-    C_k<0
-    \]
+    $$C_k<0$$
 
     Les recommandations sont priorisées selon :
 
-    \[
-    Impact_k=|C_k|
-    \]
+    $$Impact_k=|C_k|$$
     """)
